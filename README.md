@@ -1,4 +1,4 @@
-========= Tugas Individu 6 =========
+========= Tugas Individu 7 =========
 1) Jelaskan apa itu widget tree pada Flutter dan bagaimana hubungan parent-child (induk-anak) bekerja antar widget.
 jawab)
 widget tree adalah struktur data hierarkis yang mempresentasikan seluruh User Interface dari aplikasi Flutter. Setiap elemen visual/non-visual yang ada di layar(button, teks, gambar,tata letak, atau aplikasi itu sendiri) direpresentasikan oleh sebuah Widget. widget-widget ini disuusn dalam struktur parent-child, mirip dengan struktur silsilah keluarga/folder di komputer. Widget tree inilah yang menjadi blueprint awal yang digunakan Flutter untuk sebelumnya ditampilkan ke layar (Render Tree). 
@@ -81,3 +81,70 @@ Hot Reload adalah mekanisme yang sangat cepat (biasanya kurang dari satu detik) 
 jawab)
 Di flutter, setiap page adalah sebuah Route. Ketika berpindah ke page baru, kita sedang mendorong(push) Route baru ke atas tumpukan dan ketika "kembali", kita sedang mengeluarkan(pop) Route dari tumpukan tersebut. Misalnya FirstScreen layar saat ini dan SecondScreen adalah layar tujuannya.
 Langkah pertama kita bisa mulai merancang layar tujuan yang merupakan widget penuh. Navigasi dilakukan menggunakan objek Navigator.of(context), yang memerlukan BuildContent untuk mengetahui di mana posisi widget saat ini di dalam tree. Untuk menambahkan Route baru ke tumpukannya, kita menggunakan Navigator.push(). ini akan menampilkan layar tujuannya. Untuk kembali ke layar sebelumnya, kita cukup mengeluarkan Route yang berada di atas tumpukan dengan Navigator.pop(). 
+
+
+========= Tugas Individu 8 =========
+1) Jelaskan perbedaan antara Navigator.push() dan Navigator.pushReplacement() pada Flutter. Dalam kasus apa sebaiknya masing-masing digunakan pada aplikasi Football Shop kamu?
+jawab)
+Perbedaan antara Navigator.push() dan Navigator.pushReplacement() terletak pada cara mereka memanipulasi riwayat halaman aplikasi atau yang dikenal sebagai Navigator Stack. Ketika menggunakan Navigator.push(), route atau halaman baru akan ditambahkan (pushed) tepat di atas route yang sedang aktif, route lama tetap dipertahankan di bawahnya, sehingga memungkinkan pengguna untuk kembali ke halaman sebelumnya. Sebaliknya, Navigator.pushReplacement() tidak hanya menambahkan route baru, tetapi juga menghapus (removes) route yang saat ini berada di puncak stack dan menggantinya dengan route baru tersebut, hasil akhirnya adalah route lama yang diganti tidak akan lagi tersedia dalam riwayat navigasi.
+
+    push() pada proyek ini baik digunakan ketika pengguna harus bisa kembali dengan mudah ke halaman sblmnya ketika menekan tombol back. seperti implementasi pada ItemCard di MyHomePage(tombol "Add Product"), ini menambahkan ProductFormPage di atas MyHomePage (Beranda) dalam stack navigasi. Sehingga ketika pengguna berada pada ProductFormPage akan mudah untuk kembali ke halaman utama.
+
+    pushReplacement() pada proyek ini baik digunakan untuk membersihkan stack. seperti implementasi pada LeftDrawer untuk pindah ke MyHomePage atau ProductFormPage. Jika pengguna terus menerus membuka drawer dan memilih menu yang sama, stack tidak akan menumpuk halaman yang berulang (misalnya [Home, Home, Home]), sehingga manajemen memori dan alur navigasi menjadi lebih rapi dan efisien.
+
+2) Bagaimana kamu memanfaatkan hierarchy widget seperti Scaffold, AppBar, dan Drawer untuk membangun struktur halaman yang konsisten di seluruh aplikasi?
+jawab)
+ a. Scaffold sebagai Pondasi Halaman
+    Dengan menempatkan Scaffold sebagai root dari setiap halaman (Screen), saya memastikan bahwa semua halaman memiliki tata letak Material Design yang konsisten, lengkap dengan area untuk header (AppBar), body, dan Drawer.
+    Scaffold mendefinisikan area-area standar (appBar, body, drawer, bottomNavigationBar, dll.), memastikan konten aplikasi (ditempatkan di body) tidak tumpang tindih dengan area sistem atau navigasi.
+
+ b. AppBar
+    Karena diletakkan di dalam Scaffold, setiap halaman akan secara otomatis memiliki header di lokasi yang sama. 
+    Judul aplikasi, warna latar belakang, dan ikon penting (seperti tombol Back atau Action Buttons) ditetapkan di AppBar, memberikan tampilan merek dan identitas yang seragam di seluruh aplikasi.
+
+ c. Drawer 
+    Dengan membuat widget Drawer sebagai widget terpisah yang reusable, saya memastikan bahwa semua halaman yang memiliki Drawer akan menampilkan menu navigasi samping yang persis sama.
+    Drawer menjadi pusat kendali untuk navigasi ke halaman-halaman utama (Home, Add Product, dll.), sehingga lebih konsisten dan mudah diakses bagi pengguna untuk berpindah antara bagian utama aplikasi.
+
+3) Dalam konteks desain antarmuka, apa kelebihan menggunakan layout widget seperti Padding, SingleChildScrollView, dan ListView saat menampilkan elemen-elemen form? Berikan contoh penggunaannya dari aplikasi kamu.
+jawab)
+a. Padding
+Menciptakan keterbacaan dan pemisahan visual antar elemen form. Ini mencegah field input, label, dan tombol terlihat saling berhimpitan, membuat formulir terasa lebih terstruktur mengurangi kemungkinan kesalahan sentuhan (mis-tap) oleh pengguna.
+contoh : 
+    Padding( // <-- Memberi jarak 8.0 di sekeliling TextFormField
+    padding: const EdgeInsets.all(8.0),
+    child: TextFormField(
+        // ... input field ...
+    ),
+    ),
+b. SingleChildScrollView
+Memberikan responsivitas vertikal pada formulir. Ini sangat penting untuk mencegah error umum "Pixel Overflow" ketika keyboard muncul atau ketika aplikasi berjalan pada layar kecil. Pengguna dapat mengisi formulir panjang tanpa terhalang ukuran layar atau keyboard.
+contoh :
+    body: Form(
+    key: _formKey,
+    child: SingleChildScrollView( // <-- Memastikan Form bisa di-scroll
+        child: Column(
+        // ... semua field TextFormField & DropdownButtonFormField ...
+        ),
+    ),
+    ),
+c. ListView
+menawarkan kemampuan scrolling secara default, tetapi lebih efisien untuk daftar panjang karena hanya membangun widget yang terlihat di layar. 
+contoh:
+    @override
+    Widget build(BuildContext context) {
+    return Drawer( // Widget utama untuk menu samping
+        child: ListView( // Memungkinkan konten Drawer digulir
+        )
+    )
+    }
+
+4) Bagaimana kamu menyesuaikan warna tema agar aplikasi Football Shop memiliki identitas visual yang konsisten dengan brand toko?
+jawab)
+yang pertama yaitu mengidentifikasi warna brand inti, menetukan warna primer dan sekunder berdasarkan brand tersebut. Kemudian warna-warna inti ini diimplementasikan di widget MyApp (atau root widget) menggunakan ThemeData dan ColorScheme.
+Untuk widget kustom yang digunakan secara luas seperti LeftDrawer dan ItemCard, warna tema dimanfaatkan sebagai berikut:
+    LeftDrawer Header -> menggunakan Theme.of(context).colorScheme.primary agar konsisten dengan AppBar.
+
+    AppBar di MyHomePage -> menggunakan Theme.of(context).colorScheme.primary, memastikan judul dan warna latar belakang selalu mengikuti skema warna utama brand.
+
+    ElevatedButton (Tombol Simpan) -> menggunakan Colors.indigo yang mendekati warna tema.
